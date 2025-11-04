@@ -26,7 +26,7 @@ resource "aws_db_instance" "default" {
   maintenance_window = "sun:04:00-sun:05:00"  # Maintenance every Sunday (UTC)
 
   # Enable deletion protection (to prevent accidental deletion)
-  deletion_protection = true
+#    deletion_protection = "flase"
 
   # Skip final snapshot
   skip_final_snapshot = true
@@ -87,4 +87,20 @@ resource "aws_db_subnet_group" "sub-grp" {
   tags = {
     Name = "My DB subnet group"
   }
+}
+resource "aws_db_instance" "read_replica" {
+  identifier              = "rds-test-replica"
+  replicate_source_db     = aws_db_instance.default.arn
+  instance_class          = "db.t3.micro"
+  db_subnet_group_name    = aws_db_subnet_group.sub-grp.id
+  availability_zone       = "us-east-1c"
+  skip_final_snapshot     = true
+  monitoring_interval     = 60
+  monitoring_role_arn     = aws_iam_role.rds_monitoring.arn
+
+  tags = {
+    Name = "rds-read-replica"
+  }
+
+  depends_on = [aws_db_instance.default]  # ensures primary DB exists first
 }
