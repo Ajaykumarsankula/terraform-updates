@@ -3,7 +3,7 @@ resource "aws_instance" "name" {
      ami = var.ami_id
      subnet_id = aws_subnet.name.id
      tags = {
-       Name = "test"
+       Name = "test2222222222222"
      }
 
 
